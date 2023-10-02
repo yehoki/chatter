@@ -1,0 +1,13 @@
+.home-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.home-input {
+  padding: 0.25rem 0.5rem;
+  color: gray;
+  width:fit-content;
+}

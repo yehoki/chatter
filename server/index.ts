@@ -1,4 +1,4 @@
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -26,31 +26,25 @@ const io = new Server(expressServer, {
 });
 
 io.on('connection', (socket) => {
-  // console.log(`User: ${socket.id} connected`);
+  console.log(`User: ${socket.id} connected`);
 
-  // socket.on('join_room', (data) => {
-  //   console.log(data, 'joined room');
+  socket.on('join_room', (data: { username: string; room: string }) => {
+    console.log(data.username, 'joined room', data.room);
+    socket.join(data.room);
+    const newDate = new Date();
+    socket.broadcast.emit('receive_message', {
+      message: `Welcome user ${data}`,
+      username: 'ADMIN',
+      timeAt: newDate.toUTCString(),
+    });
+  });
 
-  //   socket.join(data);
-  //   socket.broadcast.emit('receive_message', 
-  //     {
-  //       message: `Welcome user ${data}`,
-  //       username: 'ADMIN',
-  //       timeAt: new Date().toUTCString()
-  //     }
-    
-  //   );
-  // });
+  socket.on('send_message', (data) => {
+    socket.to(data.room).emit('receive_message', data);
+  });
 
-  // socket.on('send_message', (data) => {
-  //   console.log(data, data.room);
-  //   socket.to(data.room).emit('receive_message', data);
-  // });
-
-  // socket.on('message', (data) => {
-  //   console.log(data);
-  //   io.emit('message', `${socket.id.substring(0, 5)}: ${data}`);
-  // });
-  // socket.on('disconnect', () => console.log(`Goodbye user ${socket.id}`));
+  socket.on('message', (data) => {
+    io.emit('message', `${socket.id.substring(0, 5)}: ${data}`);
+  });
+  socket.on('disconnect', () => console.log(`Goodbye user ${socket.id}`));
 });
-
