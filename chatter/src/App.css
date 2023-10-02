@@ -1,3 +1,26 @@
+/* HEADER */
+
+header {
+  width: 100%;
+}
+
+.header-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.header-container>h1 {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  font-size: 3rem;
+  font-weight: 500;
+}
+
+
+/* HOME  */
 .home-inputs {
   display: flex;
   flex-direction: column;
@@ -9,5 +32,41 @@
 .home-input {
   padding: 0.25rem 0.5rem;
   color: gray;
-  width:fit-content;
+  width: fit-content;
+}
+
+/* CHAT */
+
+.chat-container {
+  margin: 4rem auto;
+  width: 25dvw;
+  border: 1px solid black;
+}
+
+.chat-header {}
+
+.chat-body {
+  height: 40dvh;
+  padding: 0 1rem;
+  overflow-y: scroll;
+  margin: 0;
+}
+
+.chat-body>li {
+  list-style: none;
+  padding: 0;
+}
+
+.chat-footer {
+  border-top: 1px black solid;
+  padding: 0.5rem;
+}
+
+.chat-footer > form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-footer > form > input {
+  flex-grow: 1;
 }

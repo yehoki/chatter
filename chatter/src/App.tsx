@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import './App.css';
 import { io } from 'socket.io-client';
 import MainLayout from './components/Layout/MainLayout';
@@ -47,7 +47,7 @@ function App() {
             <button onClick={handleJoinRoom}>Join</button>
           </div>
         ) : (
-          <Chat />
+          <Chat socket={socket} username={username} room={room} />
         )}
       </main>
     </MainLayout>

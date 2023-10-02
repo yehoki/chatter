@@ -32,8 +32,9 @@ io.on('connection', (socket) => {
     console.log(data.username, 'joined room', data.room);
     socket.join(data.room);
     const newDate = new Date();
+    console.log(newDate.toUTCString());
     socket.broadcast.emit('receive_message', {
-      message: `Welcome user ${data}`,
+      message: `Welcome user ${data.username}`,
       username: 'ADMIN',
       timeAt: newDate.toUTCString(),
     });
