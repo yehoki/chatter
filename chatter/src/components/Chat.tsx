@@ -16,17 +16,25 @@ type ChatMessage = {
   timeAt: string;
 };
 
+export type User = {
+  id: string;
+  username: string;
+};
+
 function Chat({
   socket,
   username,
   room,
+  currentUsers,
 }: {
   socket: Socket;
   username: string;
   room: string;
+  currentUsers: User[];
 }) {
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [users, setUsers] = useState<User[]>(currentUsers);
   const messageBoxRef = useRef<HTMLUListElement>(null);
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -82,31 +90,44 @@ function Chat({
       }, 5);
       return () => clearTimeout(scrollTimer);
     });
+
+    socket.on('new_users', (data) => {
+      setUsers([...data.currentRoomUsers]);
+    });
   }, [socket]);
 
   return (
     <div className="chat-container">
-      <ul className="chat-body" ref={messageBoxRef}>
-        {chatMessages.map((chatMessage, index) => (
-          <SingleMessage
-            key={index}
-            message={chatMessage.message}
-            username={chatMessage.username}
-            time={chatMessage.timeAt}
-            currentUsername={username}
-          />
-        ))}
-      </ul>
-      <div className="chat-footer">
-        <form onSubmit={sendMessage}>
-          <input
-            type="text"
-            placeholder="Chat..."
-            value={message}
-            onChange={(e) => setMessage(e.currentTarget.value)}
-          />
-          <button type="submit">&#9658;</button>
-        </form>
+      <aside className="chat-sidebar">
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.username}</li>
+          ))}
+        </ul>
+      </aside>
+      <div>
+        <ul className="chat-body" ref={messageBoxRef}>
+          {chatMessages.map((chatMessage, index) => (
+            <SingleMessage
+              key={index}
+              message={chatMessage.message}
+              username={chatMessage.username}
+              time={chatMessage.timeAt}
+              currentUsername={username}
+            />
+          ))}
+        </ul>
+        <div className="chat-footer">
+          <form onSubmit={sendMessage}>
+            <input
+              type="text"
+              placeholder="Chat..."
+              value={message}
+              onChange={(e) => setMessage(e.currentTarget.value)}
+            />
+            <button type="submit">&#9658;</button>
+          </form>
+        </div>
       </div>
     </div>
   );

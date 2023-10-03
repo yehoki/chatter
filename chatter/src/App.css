@@ -39,14 +39,20 @@ header {
 
 .chat-container {
   margin: 4rem auto;
-  width: 25dvw;
+  width: fit-content;
   border: 1px solid black;
+  display: flex;
 }
 
-.chat-header {}
+.chat-sidebar {
+  border-right: 1px solid black;
+  width: 10dvw;
+  padding: 0.5rem;
+}
 
 .chat-body {
   height: 40dvh;
+  width: 25dvw;
   padding: 0 1rem;
   overflow-y: scroll;
   margin: 0;
