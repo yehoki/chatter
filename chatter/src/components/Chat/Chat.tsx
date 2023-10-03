@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import '../../App.css';
 import { Socket } from 'socket.io-client';
-import '../App.css';
 import SingleMessage from './SingleMessage';
 
 type MessageData = {

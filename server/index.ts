@@ -82,7 +82,6 @@ io.on('connection', (socket) => {
           return;
         }
       }
-      return;
     }
     // if (getRoom.foundRoom) {
     //   // If the room exists just have to verify password and add user to room
@@ -121,6 +120,10 @@ io.on('connection', (socket) => {
     // });
   });
 
+  socket.on('check_password', (data) => {
+    console.log(data);
+  });
+
   socket.on('send_message', (data) => {
     socket.to(data.room).emit('receive_message', data);
   });
@@ -130,6 +133,12 @@ io.on('connection', (socket) => {
   });
   socket.on('disconnect', () => {
     console.log(`Goodbye user ${socket.id}`);
+    const user = users.getUser(socket.id);
     users.removeUser(socket.id);
+    if (user) {
+      rooms.removeUserFromRoom(user.room, socket.id);
+      const currentRoomUsers = users.getUsersInRoom(user.room);
+      socket.to(user.room).emit('new_users', { currentRoomUsers });
+    }
   });
 });

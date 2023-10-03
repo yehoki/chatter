@@ -1,8 +1,9 @@
 import { MouseEvent, useEffect, useState } from 'react';
 import './App.css';
 import { io } from 'socket.io-client';
-import MainLayout from './components/Layout/MainLayout';
-import Chat, { User } from './components/Chat';
+
+import { User } from './components/Chat/Chat';
+import Home from './components/Home/Home';
 
 const socket = io('ws://localhost:3500');
 
@@ -11,6 +12,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [showChat, setShowChat] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -36,6 +38,12 @@ function App() {
     );
   }, []);
 
+  useEffect(() => {
+    socket.on('verify_password', (data) => {
+      setShowPassword(true);
+    });
+  });
+
   const handleJoinRoom = (e: MouseEvent<HTMLButtonElement>) => {
     if (username !== '' && room !== '') {
       // setShowChat(true);
@@ -46,25 +54,39 @@ function App() {
     }
   };
 
-  return (
-    <MainLayout>
-      <main className="App">
+  return <Home />;
+}
+
+{
+  /* <main className="App">
         {!showChat ? (
           <div className="home-inputs">
-            <h2>Join a chat room</h2>
-            <input
-              onChange={(e) => setUsername(e.currentTarget.value)}
-              className="home-input"
-              type="text"
-              placeholder="Username"
-            />
-            <input
-              onChange={(e) => setRoom(e.currentTarget.value)}
-              className="home-input"
-              type="text"
-              placeholder="Room"
-            />
-            <button onClick={handleJoinRoom}>Join</button>
+            {!showPassword ? (
+              <>
+                <h2>Join a chat room</h2>
+                <input
+                  onChange={(e) => setUsername(e.currentTarget.value)}
+                  className="home-input"
+                  type="text"
+                  placeholder="Username"
+                />
+                <input
+                  onChange={(e) => setRoom(e.currentTarget.value)}
+                  className="home-input"
+                  type="text"
+                  placeholder="Room"
+                />
+                <button onClick={handleJoinRoom}>Join</button>
+              </>
+            ) : (
+              <>
+                <h2>Enter the password to join room {room}</h2>
+                <p>Username: {username}</p>
+                <p>Room: {room}</p>
+                <input type="password" placeholder="Password" />
+                <button>Join</button>
+              </>
+            )}
           </div>
         ) : (
           <Chat
@@ -74,9 +96,7 @@ function App() {
             currentUsers={users}
           />
         )}
-      </main>
-    </MainLayout>
-  );
+      </main> */
 }
 
 export default App;

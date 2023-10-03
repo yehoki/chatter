@@ -1,0 +1,33 @@
+/* HOME */
+
+/* ROOMCHOICE */
+
+.room-choice {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.room-choice>h2 {}
+
+.room-choice-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.create-room-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+
+/* CREATEROOM */
+
+.password-option {
+  display: flex;
+  gap: 0.5rem;
+  font-size: smaller;
+}
