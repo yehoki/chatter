@@ -54,7 +54,7 @@ function App() {
     }
   };
 
-  return <Home />;
+  return <Home socket={socket} />;
 }
 
 {

@@ -41,6 +41,33 @@ const rooms = new roomService();
 io.on('connection', (socket) => {
   console.log(`User: ${socket.id} connected`);
   console.log(users);
+  console.log(rooms);
+
+  socket.on(
+    'create_room',
+    (data: { room: string; password?: string; username: string }) => {
+      const getRoom = rooms.getRoom(data.room);
+      if (getRoom.foundRoom) {
+        socket.emit('room_exists', {
+          username: data.username,
+          room: data.room,
+        });
+        return;
+      } else {
+        rooms.createRoom(data.room, data.password);
+        users.addUser(socket.id, data.username, data.room);
+        console.log(users);
+        socket.emit('enter_room', {
+          room: data.room,
+          username: data.username,
+          currentRoomUsers: [
+            { username: data.username, room: data.room, id: socket.id },
+          ],
+        });
+        return;
+      }
+    }
+  );
 
   // Sockets are create when the first user joins them.
   socket.on('join_room', (data: { username: string; room: string }) => {

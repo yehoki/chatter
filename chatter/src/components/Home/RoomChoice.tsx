@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import './Home.css';
 import CreateRoom from './CreateRoom';
 import JoinRoom from './JoinRoom';
-type Props = {};
+
+import { Socket } from 'socket.io-client';
+import { User } from '../Chat/Chat';
+type RoomChoiceProps = {
+  socket: Socket;
+  username: string;
+  roomName: string;
+  currentUsers: User[];
+  showChat: boolean;
+  setRoomName: Dispatch<SetStateAction<string>>;
+  setUsername: Dispatch<SetStateAction<string>>;
+  setCurrentUsers: Dispatch<SetStateAction<User[]>>;
+  setShowChat: Dispatch<SetStateAction<boolean>>;
+};
 
 enum RoomChoiceOption {
   CREATE,
@@ -10,7 +23,17 @@ enum RoomChoiceOption {
   NONE,
 }
 
-const RoomChoice = (props: Props) => {
+const RoomChoice: React.FC<RoomChoiceProps> = ({
+  socket,
+  username,
+  setUsername,
+  setRoomName,
+  setCurrentUsers,
+  roomName,
+  currentUsers,
+  showChat,
+  setShowChat,
+}) => {
   const [roomOption, setRoomOption] = useState<RoomChoiceOption>(
     RoomChoiceOption.NONE
   );
@@ -34,7 +57,18 @@ const RoomChoice = (props: Props) => {
           </div>
         </>
       )}
-      {roomOption === RoomChoiceOption.CREATE && <CreateRoom />}
+      {roomOption === RoomChoiceOption.CREATE && (
+        <CreateRoom
+          socket={socket}
+          username={username}
+          roomName={roomName}
+          currentUsers={currentUsers}
+          setCurrentUsers={setCurrentUsers}
+          setRoomName={setRoomName}
+          setUsername={setUsername}
+          setShowChat={setShowChat}
+        />
+      )}
       {roomOption === RoomChoiceOption.JOIN && <JoinRoom />}
     </section>
   );

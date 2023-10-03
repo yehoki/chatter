@@ -1,15 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MainLayout from '../Layout/MainLayout';
 import RoomChoice from './RoomChoice';
 import '../../App.css';
+import { Socket } from 'socket.io-client';
+import Chat, { User } from '../Chat/Chat';
 
-type Props = {};
+type HomeProps = {
+  socket: Socket;
+};
 
-const Home = (props: Props) => {
+const Home: React.FC<HomeProps> = ({ socket }) => {
+  const [showChat, setShowChat] = useState(false);
+  const [roomName, setRoomName] = useState('');
+  const [username, setUsername] = useState('');
+  const [currentUsers, setCurrentUsers] = useState<User[]>([]);
   return (
     <MainLayout>
       <main className="App">
-        <RoomChoice />
+        {showChat ? (
+          <Chat
+            socket={socket}
+            username={username}
+            room={roomName}
+            currentUsers={currentUsers}
+          />
+        ) : (
+          <RoomChoice
+            socket={socket}
+            username={username}
+            roomName={roomName}
+            currentUsers={currentUsers}
+            setCurrentUsers={setCurrentUsers}
+            setRoomName={setRoomName}
+            setUsername={setUsername}
+            showChat={showChat}
+            setShowChat={setShowChat}
+          />
+        )}
+
         {/* {!showChat ? (
       <div className="home-inputs">
         {!showPassword ? (
