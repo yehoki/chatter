@@ -10,7 +10,6 @@ type RoomChoiceProps = {
   username: string;
   roomName: string;
   currentUsers: User[];
-  showChat: boolean;
   setRoomName: Dispatch<SetStateAction<string>>;
   setUsername: Dispatch<SetStateAction<string>>;
   setCurrentUsers: Dispatch<SetStateAction<User[]>>;
@@ -31,7 +30,6 @@ const RoomChoice: React.FC<RoomChoiceProps> = ({
   setCurrentUsers,
   roomName,
   currentUsers,
-  showChat,
   setShowChat,
 }) => {
   const [roomOption, setRoomOption] = useState<RoomChoiceOption>(
@@ -69,7 +67,18 @@ const RoomChoice: React.FC<RoomChoiceProps> = ({
           setShowChat={setShowChat}
         />
       )}
-      {roomOption === RoomChoiceOption.JOIN && <JoinRoom />}
+      {roomOption === RoomChoiceOption.JOIN && (
+        <JoinRoom
+          socket={socket}
+          username={username}
+          roomName={roomName}
+          currentUsers={currentUsers}
+          setCurrentUsers={setCurrentUsers}
+          setRoomName={setRoomName}
+          setUsername={setUsername}
+          setShowChat={setShowChat}
+        />
+      )}
     </section>
   );
 };

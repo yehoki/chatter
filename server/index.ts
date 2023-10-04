@@ -25,16 +25,15 @@ const io = new Server(expressServer, {
         : ['http://localhost:5500', 'http://127.0.0.1:5500'],
   },
 });
-
 const eventList = {
   connection: 'When a client connects to a socket',
   join_room: 'When a client emits an event to join a specific room',
-  verify_password:
-    'Event emitted by the server when joining a room is required to verify a password to enter a room',
-  duplicate_username:
-    'Event emitted by the server when attempting to join with a username which already exists in the same room',
   enter_room:
     'Event emitted by the server when successfully joins a room, containing all current users in the room',
+  verify_password:
+    'Event emitted by the server when joining a room is required to verify a password to enter a room',
+  error_join:
+    'Event emitted by the server when there has been an error joining a room, with the specified error message provided',
 };
 const users = new userService();
 const rooms = new roomService();
@@ -54,9 +53,10 @@ io.on('connection', (socket) => {
         });
         return;
       } else {
-        rooms.createRoom(data.room, data.password);
+        rooms.createRoom(data.room, socket.id, data.password);
         users.addUser(socket.id, data.username, data.room);
-        console.log(users);
+        console.log(users, rooms);
+        socket.join(data.room);
         socket.emit('enter_room', {
           room: data.room,
           username: data.username,
@@ -72,84 +72,77 @@ io.on('connection', (socket) => {
   // Sockets are create when the first user joins them.
   socket.on('join_room', (data: { username: string; room: string }) => {
     const getRoom = rooms.getRoom(data.room);
+    // Check a room exists
     if (getRoom.foundRoom) {
-      const checkUser = users.addUser(socket.id, data.username, data.room);
-      if (checkUser.error) {
-        socket.emit('duplicate_username', data);
+      // Password verification necessary to enter the room
+      if (getRoom.foundRoom.password) {
+        socket.emit('verify_password', data);
         return;
       } else {
-        const addToRoom = rooms.addUserToRoom(data.room, socket.id);
-        if (addToRoom === 1) {
-          socket.join(data.room);
-          const currentRoomUsers = users.getUsersInRoom(data.room);
-          socket.emit('enter_room', { ...data, currentRoomUsers });
-          socket.to(data.room).emit('new_users', { currentRoomUsers });
+        const checkUser = users.addUser(socket.id, data.username, data.room);
+        if (checkUser.error) {
+          socket.emit('error_join', {
+            ...data,
+            error: checkUser.error,
+          });
           return;
-        } else {
-          // Error adding user to room
-          return;
-        }
-      }
-    } else {
-      rooms.createRoom(data.room);
-      const checkUser = users.addUser(socket.id, data.username, data.room);
-      if (checkUser.error) {
-        socket.emit('duplicate_username', data);
-        return;
-      } else {
-        const addToRoom = rooms.addUserToRoom(data.room, socket.id);
-        if (addToRoom === 1) {
-          socket.join(data.room);
-          const currentRoomUsers = users.getUsersInRoom(data.room);
-          socket.emit('enter_room', { ...data, currentRoomUsers });
-          socket.to(data.room).emit('new_users', currentRoomUsers);
-          return;
-        } else {
-          // Error adding user to room
-          return;
+        } else if (checkUser.newUser) {
+          const addToRoom = rooms.addUserToRoom(data.room, socket.id);
+          if (addToRoom === 1) {
+            socket.join(data.room);
+            const currentRoomUsers = users.getUsersInRoom(data.room);
+            socket.emit('enter_room', { ...data, currentRoomUsers });
+            socket.to(data.room).emit('new_users', { currentRoomUsers });
+            return;
+          } else {
+            // Error adding user to room
+            socket.emit('error_join', {
+              ...data,
+              error: 'Could not join the room',
+            });
+            return;
+          }
         }
       }
     }
-    // if (getRoom.foundRoom) {
-    //   // If the room exists just have to verify password and add user to room
-
-    //   if (getRoom.foundRoom.password) {
-    //     return socket.emit('verify_password', data);
-    //   } else {
-    //     users.addUser(socket.id, data.username, data.room);
-    //   }
-    //   // users.addUser(socket.id, data.username, data.room);
-    //   // rooms.addUserToRoom(data.room, socket.id);
-    // }
-
-    // console.log(data.username, 'joined room', data.room);
-    // const { newUser, error } = users.addUser(
-    //   socket.id,
-    //   data.username,
-    //   data.room
-    // );
-    // if (error) {
-    //   console.log(error);
-    //   return;
-    // }
-    // socket.join(data.room);
-    // const newDate = new Date();
-    // console.log('USERS', users.getUsersInRoom(data.room));
-
-    // socket.broadcast.emit('receive_message', {
-    //   message: `Welcome user ${data.username}`,
-    //   username: 'ADMIN',
-    //   timeAt: newDate.toUTCString(),
-    //   users: users.getUsersInRoom(data.room),
-    // });
-    // socket.to(data.room).emit('new_users', {
-    //   users: users.getUsersInRoom(data.room),
-    // });
   });
 
-  socket.on('check_password', (data) => {
-    console.log(data);
-  });
+  socket.on(
+    'check_password',
+    (data: { username: string; room: string; password: string }) => {
+      const findRoom = rooms.getRoom(data.room);
+      if (findRoom.foundRoom) {
+        if (
+          findRoom.foundRoom.password &&
+          findRoom.foundRoom.password === data.password
+        ) {
+          const addUserToRoom = rooms.addUserToRoom(
+            data.room,
+            socket.id,
+            data.password
+          );
+          if (addUserToRoom === 1) {
+            const addUser = users.addUser(socket.id, data.username, data.room);
+            if (addUser.newUser) {
+              socket.join(data.room);
+              const currentRoomUsers = users.getUsersInRoom(data.room);
+              socket.emit('enter_room', { currentRoomUsers });
+              socket.to(data.room).emit('new_users', { currentRoomUsers });
+            } else {
+              socket.emit(
+                'error_join',
+                addUser.error || 'Could not join the room'
+              );
+            }
+          } else {
+            socket.emit('error_join', 'Could not join the room');
+          }
+        }
+      } else {
+        socket.emit('error_join', findRoom.error || 'Could not join the room');
+      }
+    }
+  );
 
   socket.on('send_message', (data) => {
     socket.to(data.room).emit('receive_message', data);

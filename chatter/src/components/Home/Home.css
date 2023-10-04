@@ -17,17 +17,47 @@
   gap: 0.5rem;
 }
 
+/* CREATEROOM */
+
+
 .create-room-inputs {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-
-/* CREATEROOM */
-
 .password-option {
   display: flex;
   gap: 0.5rem;
   font-size: smaller;
+}
+
+/* JOINROOM */
+
+.join-room-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.join-room-password-verify {
+  padding: 0;
+  margin: 0;
+}
+
+.join-room-password-verify>* {
+  margin: 0;
+  padding: 0;
+}
+
+.join-room-password-verify>p {
+  margin-bottom: 0.25rem;
+  padding: 0;
+}
+
+.join-room-password-verify>div {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

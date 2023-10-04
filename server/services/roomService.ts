@@ -1,20 +1,21 @@
 class roomService {
   private rooms: { name: string; password?: string; userIds: string[] }[] = [];
 
-  createRoom(name: string, password?: string) {
+  createRoom(name: string, firstId: string, password?: string) {
     if (name === '') {
       return -1;
     }
     if (password) {
-      return this.rooms.push({ name, password, userIds: [] });
+      return this.rooms.push({ name, password, userIds: [firstId] });
     } else {
-      return this.rooms.push({ name, userIds: [] });
+      return this.rooms.push({ name, userIds: [firstId] });
     }
   }
 
-  getRoom(name: string) {
-    const foundRoom = this.rooms.find((room) => room.name === name);
-    if (!foundRoom) return { error: `Could not find room with name ${name}` };
+  getRoom(roomName: string) {
+    const foundRoom = this.rooms.find((room) => room.name === roomName);
+    if (!foundRoom)
+      return { error: `Could not find room with name ${roomName}` };
     return { foundRoom };
   }
 
@@ -68,6 +69,15 @@ class roomService {
       return 1;
     } else {
       return -1;
+    }
+  }
+
+  verifyRoomPassword(roomName: string, password: string) {
+    const { foundRoom, error } = this.getRoom(roomName);
+    if (error) {
+      return error;
+    } else if(foundRoom){
+      
     }
   }
 }

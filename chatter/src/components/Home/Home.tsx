@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../Layout/MainLayout';
 import RoomChoice from './RoomChoice';
 import '../../App.css';
@@ -14,6 +14,14 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
   const [roomName, setRoomName] = useState('');
   const [username, setUsername] = useState('');
   const [currentUsers, setCurrentUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    socket.on('enter_room', (data) => {
+      setCurrentUsers(data.currentRoomUsers);
+      setShowChat(true);
+    });
+  }, []);
+
   return (
     <MainLayout>
       <main className="App">
@@ -33,48 +41,9 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
             setCurrentUsers={setCurrentUsers}
             setRoomName={setRoomName}
             setUsername={setUsername}
-            showChat={showChat}
             setShowChat={setShowChat}
           />
         )}
-
-        {/* {!showChat ? (
-      <div className="home-inputs">
-        {!showPassword ? (
-          <>
-            <h2>Join a chat room</h2>
-            <input
-              onChange={(e) => setUsername(e.currentTarget.value)}
-              className="home-input"
-              type="text"
-              placeholder="Username"
-            />
-            <input
-              onChange={(e) => setRoom(e.currentTarget.value)}
-              className="home-input"
-              type="text"
-              placeholder="Room"
-            />
-            <button onClick={handleJoinRoom}>Join</button>
-          </>
-        ) : (
-          <>
-            <h2>Enter the password to join room {room}</h2>
-            <p>Username: {username}</p>
-            <p>Room: {room}</p>
-            <input type="password" placeholder="Password" />
-            <button>Join</button>
-          </>
-        )}
-      </div>
-    ) : (
-      <Chat
-        socket={socket}
-        username={username}
-        room={room}
-        currentUsers={users}
-      />
-    )} */}
       </main>
     </MainLayout>
   );
