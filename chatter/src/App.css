@@ -19,6 +19,17 @@ header {
   font-weight: 500;
 }
 
+.header-container>h1>a {
+  text-decoration: none;
+}
+
+.header-container>h1>a:visited,
+.header-container>h1>a:active,
+.header-container>h1>a:focus {
+  color: var(--text);
+  text-decoration: none;
+}
+
 
 /* HOME  */
 .home-inputs {

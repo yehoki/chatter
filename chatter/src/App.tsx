@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 
 import { User } from './components/Chat/Chat';
 import Home from './components/Home/Home';
+import { Route, Routes } from 'react-router-dom';
 
 const socket = io('ws://localhost:3500');
 
@@ -54,7 +55,11 @@ function App() {
     }
   };
 
-  return <Home socket={socket} />;
+  return (
+    <Routes>
+      <Route path="/" element={<Home socket={socket} />} />
+    </Routes>
+  );
 }
 
 {

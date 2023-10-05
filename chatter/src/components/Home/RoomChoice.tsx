@@ -5,6 +5,7 @@ import JoinRoom from './JoinRoom';
 
 import { Socket } from 'socket.io-client';
 import { User } from '../Chat/Chat';
+import HomeButton from './HomeButton';
 type RoomChoiceProps = {
   socket: Socket;
   username: string;
@@ -46,12 +47,14 @@ const RoomChoice: React.FC<RoomChoiceProps> = ({
         <>
           <h2 className="">Welcome to Chatter</h2>
           <div className="room-choice-buttons">
-            <button onClick={() => handleRoomChoice(RoomChoiceOption.CREATE)}>
-              Create a room
-            </button>
-            <button onClick={() => handleRoomChoice(RoomChoiceOption.JOIN)}>
-              Join a room
-            </button>
+            <HomeButton
+              label="Create a room"
+              onClick={() => handleRoomChoice(RoomChoiceOption.CREATE)}
+            />
+            <HomeButton
+              label="Join a room"
+              onClick={() => handleRoomChoice(RoomChoiceOption.JOIN)}
+            />
           </div>
         </>
       )}

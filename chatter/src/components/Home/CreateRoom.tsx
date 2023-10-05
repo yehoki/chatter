@@ -7,6 +7,8 @@ import React, {
 } from 'react';
 import { Socket } from 'socket.io-client';
 import { User } from '../Chat/Chat';
+import HomeInput from './HomeInput';
+import HomeButton from './HomeButton';
 
 type CreatRoomProps = {
   socket: Socket;
@@ -67,27 +69,25 @@ const CreateRoom: React.FC<CreatRoomProps> = ({
     <>
       <h2>Create a room</h2>
       <div className="create-room-inputs">
-        <input
+        <HomeInput
           type="text"
           placeholder="Room"
           required
           value={roomName}
-          onChange={(e) => {
-            console.log(e.currentTarget.value, roomName);
-            setRoomName(e.currentTarget.value);
-          }}
+          onChange={setRoomName}
         />
-        <input
+        <HomeInput
           type="text"
           placeholder="Username"
           required
           value={username}
-          onChange={(e) => setUsername(e.currentTarget.value)}
+          onChange={setUsername}
         />
         <div className="password-option">
-          <input
+          <HomeInput
             checked={isPasswordRequired}
             onChange={() => setIsPasswordRequired((prev) => !prev)}
+            required={false}
             type="checkbox"
             name="password-required"
             id="password-required"
@@ -95,15 +95,15 @@ const CreateRoom: React.FC<CreatRoomProps> = ({
           <label htmlFor="password-required">Password?</label>
         </div>
         {isPasswordRequired && (
-          <input
+          <HomeInput
             type="password"
             placeholder="Password"
             required
             value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
+            onChange={setPassword}
           />
         )}
-        <button onClick={handleCreateRoom}>Create</button>
+        <HomeButton onClick={handleCreateRoom} label="Create" />
       </div>
     </>
   );

@@ -7,6 +7,8 @@ import React, {
 } from 'react';
 import { Socket } from 'socket.io-client';
 import { User } from '../Chat/Chat';
+import HomeButton from './HomeButton';
+import HomeInput from './HomeInput';
 
 type JoinRoomProps = {
   socket: Socket;
@@ -53,21 +55,21 @@ const JoinRoom: React.FC<JoinRoomProps> = ({
         <>
           <h2>Join a room</h2>
           <div className="join-room-inputs">
-            <input
+            <HomeInput
               type="text"
               placeholder="Room"
               required
               value={roomName}
-              onChange={(e) => setRoomName(e.currentTarget.value)}
+              onChange={setRoomName}
             />
-            <input
+            <HomeInput
               type="text"
               placeholder="Username"
               required
               value={username}
-              onChange={(e) => setUsername(e.currentTarget.value)}
+              onChange={setUsername}
             />
-            <button onClick={handleJoinRoom}>Join</button>
+            <HomeButton onClick={handleJoinRoom} label="Join" />
           </div>
         </>
       ) : (
@@ -77,14 +79,15 @@ const JoinRoom: React.FC<JoinRoomProps> = ({
             <p>Username: {username}</p>
             <p>Room: {roomName}</p>
             <div>
-              <input
+              <HomeInput
                 type="password"
                 placeholder="Password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.currentTarget.value)}
+                onChange={setPassword}
               />
-              <button onClick={handleCheckPassword}>Join</button>
+
+              <HomeButton label="Join" onClick={handleCheckPassword} />
             </div>
           </div>
         </>
