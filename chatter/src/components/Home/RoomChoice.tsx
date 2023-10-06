@@ -6,6 +6,12 @@ import JoinRoom from './JoinRoom';
 import { Socket } from 'socket.io-client';
 import { User } from '../Chat/Chat';
 import HomeButton from './HomeButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../app/store';
+import {
+  RoomChoiceOption,
+  setPageChoice,
+} from '../../features/pageChoiceSlice';
 type RoomChoiceProps = {
   socket: Socket;
   username: string;
@@ -17,12 +23,6 @@ type RoomChoiceProps = {
   setShowChat: Dispatch<SetStateAction<boolean>>;
 };
 
-enum RoomChoiceOption {
-  CREATE,
-  JOIN,
-  NONE,
-}
-
 const RoomChoice: React.FC<RoomChoiceProps> = ({
   socket,
   username,
@@ -33,12 +33,13 @@ const RoomChoice: React.FC<RoomChoiceProps> = ({
   currentUsers,
   setShowChat,
 }) => {
-  const [roomOption, setRoomOption] = useState<RoomChoiceOption>(
-    RoomChoiceOption.NONE
+  const dispatch = useDispatch();
+  const roomOption = useSelector(
+    (state: RootState) => state.pageChoice.pageChoice
   );
 
   const handleRoomChoice = (choice: RoomChoiceOption) => {
-    setRoomOption(choice);
+    dispatch(setPageChoice(choice));
   };
 
   return (

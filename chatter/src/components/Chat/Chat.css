@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+}
+
+/* CHAT */
+
+@media (max-width:768px) {
+  .chat-container {
+    /* margin: */
+  }
+}
+
+.chat-container {
+  max-width: 1024px;
+  margin: 4rem auto;
+  width: 100dvw;
+  border: 1px solid var(--primary);
+  height: 75dvh;
+  display: flex;
+}
+
+/* SIDEBAR */
+
+@media (max-width: 768px) {
+  .chat-sidebar {
+    display: none;
+  }
+}
+
+.chat-sidebar {
+  border-right: 1px solid var(--primary);
+  padding: 0;
+  min-width: 25%;
+}
+
+.user-list {
+  padding: 0;
+  margin: 0;
+}
+
+.single-user {
+  list-style-type: none;
+  padding: 0.5rem 0.25rem;
+  margin: 0;
+  transition: all 0.25s linear;
+}
+
+.single-user:hover {
+  background-color: var(--accent);
+  color: var(--secondary);
+}
+
+
+
+
+/* MAIN */
+
+.chat-main {
+  max-width: 75%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width:768px) {
+  .chat-main {
+    max-width: 100%;
+  }
+}
+
+
+.chat-body {
+  flex-grow: 1;
+  width: 100%;
+  padding: 0;
+  overflow-y: scroll;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.chat-body::-webkit-scrollbar {
+  background-color: transparent;
+  width: 0.75rem;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 16px;
+  width: 0.25rem;
+}
+
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent);
+}
+
+.chat-body>li {
+  list-style: none;
+  padding: 0;
+}
+
+.user-message {}
+
+
+.single-message {
+  /* max-width: 100%; */
+  /* word-wrap: normal; */
+  /* padding: 0.25rem 0.5rem; */
+}
+
+.single-message>p {
+  padding: 0;
+  margin: 0;
+}
+
+.single-message-info {
+  font-size:small;
+}
+
+.single-message-content {
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  padding: 0.25rem 0.5rem;
+}
+
+
+/* FOOTER / INTERACTION */
+
+
+.chat-footer {
+  border-top: 1px var(--primary) solid;
+  padding: 0;
+}
+
+.chat-footer>form {
+  display: flex;
+}
+
+.chat-message {
+  flex-grow: 1;
+  border: none;
+  outline: transparent;
+  padding: 0.5rem 0.75rem;
+  font-weight: bold;
+}
+
+.chat-message::placeholder {
+  color: var(--text);
+  font-weight: bold;
+}
+
+.chat-message:focus {
+  /* outline: 1px solid  */
+  outline: 1px solid var(--accent);
+}
+
+.chat-message-submit {
+  border: none;
+  color: var(--text);
+  background-color: var(--primary);
+  outline: transparent;
+}
+
+.chat-message-submit:focus {
+  background-color: var(--accent);
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../App.css';
+import './Chat.css';
 type SingleMessageProps = {
   message: string;
   username: string;
@@ -15,16 +15,15 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
 }) => {
   return (
     <li
-      className={`message-box ${
+      className={`single-message ${
         username === currentUsername ? 'current-user' : 'other-user'
       }`}
     >
-      <div className={`single-message `}>
-        <p>{message}</p>
-        <p>
-          {username}: {new Date(time).toLocaleTimeString('en-gb')}
-        </p>
-      </div>
+      <p className="single-message-info">
+        <span style={{ fontWeight: 700 }}>{username} </span>
+        {new Date(time).toLocaleTimeString('en-gb')}
+      </p>
+      <p className="single-message-content">{message}</p>
     </li>
   );
 };

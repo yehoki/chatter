@@ -21,7 +21,7 @@
   padding: 0.25rem 2rem;
   background-color: var(--primary);
   color: var(--text);
-  outline: none ;
+  outline: none;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -108,18 +108,6 @@
   gap: 0.5rem;
 }
 
-/* .create-room-inputs>input {
-  border: 2px solid var(--primary);
-  color: var(--text);
-  outline: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-}
-
-.create-room-inputs>input::placeholder {
-  color: var(--text);
-  font-weight: bold;
-} */
 
 .password-option {
   display: flex;
@@ -131,31 +119,6 @@
   font-size: smaller;
 }
 
-/* .password-option>input[type="checkbox"] {
-  accent-color: var(--accent);
-  border: 4px solid var(--primary)
-} */
-
-.create-room-inputs>button {
-  font-size: large;
-  width: 100%;
-  padding: 0.25rem 2rem;
-  background-color: var(--primary);
-  color: var(--text);
-  outline: none;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  opacity: 75%;
-  transition: all 0.15s linear;
-}
-
-.create-room-inputs>button:hover,
-.create-room-inputs>button:active {
-  opacity: 100%;
-}
-
-
 /* JOINROOM */
 
 .join-room-inputs {
@@ -163,20 +126,6 @@
   flex-direction: column;
   gap: 0.5rem;
 }
-
-.join-room-inputs>input {
-  border: 2px solid var(--primary);
-  color: var(--text);
-  outline: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-}
-
-.join-room-inputs>input::placeholder {
-  color: var(--text);
-  font-weight: bold;
-}
-
 
 .join-room-password-verify {
   padding: 0;

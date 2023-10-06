@@ -1,15 +1,25 @@
 import React from 'react';
 import '../../App.css';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import {
+  RoomChoiceOption,
+  setPageChoice,
+} from '../../features/pageChoiceSlice';
 
-type Props = {};
+const Header = () => {
+  const dispatch = useDispatch();
 
-const Header = (props: Props) => {
   return (
     <header>
       <div className="header-container">
         <h1>
-          <Link to={'/'}>Chatter</Link>
+          <Link
+            onClick={() => dispatch(setPageChoice(RoomChoiceOption.NONE))}
+            to={'/'}
+          >
+            Chatter
+          </Link>
         </h1>
       </div>
     </header>

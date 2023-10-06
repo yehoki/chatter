@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
-import '../../App.css';
+import './Chat.css';
 import { Socket } from 'socket.io-client';
 import SingleMessage from './SingleMessage';
 
@@ -99,13 +99,15 @@ function Chat({
   return (
     <div className="chat-container">
       <aside className="chat-sidebar">
-        <ul>
+        <ul className="user-list">
           {users.map((user) => (
-            <li key={user.id}>{user.username}</li>
+            <li className="single-user" key={user.id}>
+              {user.username}
+            </li>
           ))}
         </ul>
       </aside>
-      <div>
+      <div className="chat-main">
         <ul className="chat-body" ref={messageBoxRef}>
           {chatMessages.map((chatMessage, index) => (
             <SingleMessage
@@ -120,12 +122,15 @@ function Chat({
         <div className="chat-footer">
           <form onSubmit={sendMessage}>
             <input
+              className="chat-message"
               type="text"
               placeholder="Chat..."
               value={message}
               onChange={(e) => setMessage(e.currentTarget.value)}
             />
-            <button type="submit">&#9658;</button>
+            <button className="chat-message-submit" type="submit">
+              &#9658;
+            </button>
           </form>
         </div>
       </div>
