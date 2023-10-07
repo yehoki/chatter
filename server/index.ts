@@ -152,14 +152,34 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
     io.emit('message', `${socket.id.substring(0, 5)}: ${data}`);
   });
+
+  socket.on('user-typing', (data: { username: string; room: string }) => {
+    socket.broadcast
+      .to(data.room)
+      .emit('user-typing', { username: data.username });
+  });
+
+  socket.on('stop-typing', (data: { username: string; room: string }) => {
+    socket.broadcast
+      .to(data.room)
+      .emit('stop-typing', { username: data.username });
+  });
+
   socket.on('disconnect', () => {
     console.log(`Goodbye user ${socket.id}`);
     const user = users.getUser(socket.id);
     users.removeUser(socket.id);
     if (user) {
+      socket.broadcast.emit('stop-typing', { username: user.username });
       rooms.removeUserFromRoom(user.room, socket.id);
       const currentRoomUsers = users.getUsersInRoom(user.room);
-      socket.to(user.room).emit('new_users', { currentRoomUsers });
+      // Check if any users left in room
+      // If empty: delete room
+      if (currentRoomUsers.length > 0) {
+        socket.to(user.room).emit('new_users', { currentRoomUsers });
+      } else {
+        rooms.removeRoom(user.room);
+      }
     }
   });
 });

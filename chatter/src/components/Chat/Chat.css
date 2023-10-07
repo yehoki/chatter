@@ -17,7 +17,7 @@
 
 @media (max-width:1024px) {
   .chat-container {
-    margin: 0 2rem;
+    margin: 0.5rem 0;
   }
 }
 
@@ -154,11 +154,15 @@
 }
 
 .single-message-info {
-  font-size: x-small;
+  font-size: smaller;
   padding: 0 0.5rem;
   margin: 0;
   background-color: transparent;
   border-radius: 16px;
+}
+
+.current-user-info {
+  text-align: right;
 }
 
 .single-message-user {
@@ -172,6 +176,7 @@
   margin: 0.25rem 0 0 0;
   background-color: transparent;
   border-radius: 16px;
+  font-weight: 600;
 }
 
 

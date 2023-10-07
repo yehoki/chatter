@@ -16,7 +16,7 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
   return (
     <li
       className={`single-message ${
-        username === currentUsername ? 'current-user' : 'other-user'
+        username === currentUsername ? 'current-user' : ''
       }`}
     >
       {/* <p className="single-message-date">
@@ -24,7 +24,11 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
       </p> */}
 
       <div className="single-message-box">
-        <p className="single-message-info">
+        <p
+          className={`single-message-info
+        ${username === currentUsername ? 'current-user-info' : ''}
+        `}
+        >
           <span className="single-message-user" style={{ fontWeight: 700 }}>
             {username}{' '}
           </span>

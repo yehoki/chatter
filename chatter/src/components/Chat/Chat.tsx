@@ -1,7 +1,17 @@
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, {
+  FormEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { debounce } from 'lodash';
 import './Chat.css';
 import { Socket } from 'socket.io-client';
 import SingleMessage from './SingleMessage';
+import TypingActivity from './TypingActivity';
 
 type MessageData = {
   room: string;
@@ -21,6 +31,8 @@ export type User = {
   username: string;
 };
 
+let typingTimer: NodeJS.Timeout;
+
 function Chat({
   socket,
   username,
@@ -35,6 +47,8 @@ function Chat({
   const [message, setMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [users, setUsers] = useState<User[]>(currentUsers);
+  const [isTyping, setIsTyping] = useState(false);
+  const [usersTyping, setUsersTyping] = useState<string[]>([]);
   const messageBoxRef = useRef<HTMLUListElement>(null);
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +63,7 @@ function Chat({
         message: message,
         currentTime: new Date().toUTCString(),
       };
-      await socket.emit('send_message', messageData);
+      socket.emit('send_message', messageData);
       setChatMessages((prev) => [
         ...prev,
         { username: username, message: message, timeAt: currentTime },
@@ -68,17 +82,50 @@ function Chat({
     }
   };
 
+  // Emit typing at the start of typing then a 2s period between no change indicates it stopped typing which emits a stop-typing event
+
+  const handleTyping = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (message === '' && e.key === 'Backspace') {
+        return;
+      }
+      if (message === '' && isTyping) {
+        setIsTyping(false);
+        socket.emit('stop-typing', { username, room });
+        return;
+      }
+      if (isTyping) {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+          setIsTyping(false);
+          socket.emit('stop-typing', { username, room });
+        }, 1000);
+        return () => clearTimeout(typingTimer);
+      } else {
+        setIsTyping(true);
+        socket.emit('user-typing', { username, room });
+        typingTimer = setTimeout(() => {
+          setIsTyping(false);
+          socket.emit('stop-typing', { username, room });
+        }, 1000);
+        return () => clearTimeout(typingTimer);
+      }
+    },
+    [isTyping, socket, message]
+  );
+
   useEffect(() => {
     socket.on('receive_message', (data) => {
       console.log(data);
-      setChatMessages((prev) => [
-        ...prev,
+      const newMessages = [
+        ...chatMessages,
         {
           message: data.message,
           username: data.username,
           timeAt: data.currentTime,
         },
-      ]);
+      ];
+      setChatMessages(newMessages);
       const scrollTimer = setTimeout(() => {
         if (messageBoxRef.current) {
           messageBoxRef.current.scrollTo({
@@ -94,7 +141,30 @@ function Chat({
     socket.on('new_users', (data) => {
       setUsers([...data.currentRoomUsers]);
     });
-  }, [socket]);
+
+    socket.on('user-typing', (data: { username: string }) => {
+      if (!usersTyping.find((user) => user === data.username)) {
+        const usersTypingCopy = [...usersTyping, data.username];
+        setUsersTyping(usersTypingCopy);
+        const scrollTimer = setTimeout(() => {
+          if (messageBoxRef.current) {
+            messageBoxRef.current.scrollTo({
+              left: 0,
+              top: messageBoxRef.current.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+        }, 5);
+        return () => clearTimeout(scrollTimer);
+      }
+    });
+
+    socket.on('stop-typing', (data: { username: string }) => {
+      if (usersTyping.find((user) => user === data.username)) {
+        setUsersTyping((prev) => prev.filter((user) => user !== data.username));
+      }
+    });
+  }, [socket, usersTyping]);
 
   return (
     <div className="chat-container">
@@ -122,6 +192,7 @@ function Chat({
               currentUsername={username}
             />
           ))}
+          <TypingActivity usernames={usersTyping} />
         </ul>
         <div className="chat-footer">
           <form onSubmit={sendMessage}>
@@ -130,6 +201,7 @@ function Chat({
               type="text"
               placeholder="Chat..."
               value={message}
+              onKeyUp={handleTyping}
               onChange={(e) => setMessage(e.currentTarget.value)}
             />
             <button className="chat-message-submit" type="submit">
