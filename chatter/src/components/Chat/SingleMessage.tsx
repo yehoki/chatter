@@ -19,11 +19,19 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
         username === currentUsername ? 'current-user' : 'other-user'
       }`}
     >
-      <p className="single-message-info">
-        <span style={{ fontWeight: 700 }}>{username} </span>
+      {/* <p className="single-message-date">
         {new Date(time).toLocaleTimeString('en-gb')}
-      </p>
-      <p className="single-message-content">{message}</p>
+      </p> */}
+
+      <div className="single-message-box">
+        <p className="single-message-info">
+          <span className="single-message-user" style={{ fontWeight: 700 }}>
+            {username}{' '}
+          </span>
+          {new Date(time).toLocaleTimeString('en-gb')}
+        </p>
+        <p className="single-message-content">{message}</p>
+      </div>
     </li>
   );
 };

@@ -99,6 +99,7 @@ function Chat({
   return (
     <div className="chat-container">
       <aside className="chat-sidebar">
+        <h3 className="user-list-heading">Current users</h3>
         <ul className="user-list">
           {users.map((user) => (
             <li className="single-user" key={user.id}>
@@ -108,6 +109,9 @@ function Chat({
         </ul>
       </aside>
       <div className="chat-main">
+        <div className="chat-header">
+          <h2 className="chat-header-heading">{room}</h2>
+        </div>
         <ul className="chat-body" ref={messageBoxRef}>
           {chatMessages.map((chatMessage, index) => (
             <SingleMessage

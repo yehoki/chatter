@@ -91,6 +91,7 @@ io.on('connection', (socket) => {
           if (addToRoom === 1) {
             socket.join(data.room);
             const currentRoomUsers = users.getUsersInRoom(data.room);
+            console.log(currentRoomUsers, data);
             socket.emit('enter_room', { ...data, currentRoomUsers });
             socket.to(data.room).emit('new_users', { currentRoomUsers });
             return;
