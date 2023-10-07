@@ -98,44 +98,48 @@ function Chat({
           setIsTyping(false);
           socket.emit('stop-typing', { username, room });
         }, 1000);
-        return () => clearTimeout(typingTimer);
       } else {
         setIsTyping(true);
         socket.emit('user-typing', { username, room });
+        clearTimeout(typingTimer);
         typingTimer = setTimeout(() => {
           setIsTyping(false);
           socket.emit('stop-typing', { username, room });
         }, 1000);
-        return () => clearTimeout(typingTimer);
       }
     },
     [isTyping, socket, message, room, username]
   );
 
+  const onMessageReceive = useCallback((message: ChatMessage) => {
+    setChatMessages((prev) => [...prev, message]);
+    const scrollTimer = setTimeout(() => {
+      if (messageBoxRef.current) {
+        messageBoxRef.current.scrollTo({
+          left: 0,
+          top: messageBoxRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    }, 5);
+    return () => clearTimeout(scrollTimer);
+  }, []);
+
   useEffect(() => {
-    socket.on('receive_message', (data) => {
-      console.log(data);
-      const newMessages = [
-        ...chatMessages,
-        {
+    socket.on(
+      'receive_message',
+      (data: { message: string; username: string; currentTime: string }) => {
+        const newMessage: ChatMessage = {
           message: data.message,
           username: data.username,
           timeAt: data.currentTime,
-        },
-      ];
-      setChatMessages(newMessages);
-      const scrollTimer = setTimeout(() => {
-        if (messageBoxRef.current) {
-          messageBoxRef.current.scrollTo({
-            left: 0,
-            top: messageBoxRef.current.scrollHeight,
-            behavior: 'smooth',
-          });
-        }
-      }, 5);
-      return () => clearTimeout(scrollTimer);
-    });
+        };
+        onMessageReceive(newMessage);
+      }
+    );
+  }, [socket, onMessageReceive]);
 
+  useEffect(() => {
     socket.on('new_users', (data) => {
       setUsers([...data.currentRoomUsers]);
     });
@@ -144,16 +148,6 @@ function Chat({
       if (!usersTyping.find((user) => user === data.username)) {
         const usersTypingCopy = [...usersTyping, data.username];
         setUsersTyping(usersTypingCopy);
-        const scrollTimer = setTimeout(() => {
-          if (messageBoxRef.current) {
-            messageBoxRef.current.scrollTo({
-              left: 0,
-              top: messageBoxRef.current.scrollHeight,
-              behavior: 'smooth',
-            });
-          }
-        }, 5);
-        return () => clearTimeout(scrollTimer);
       }
     });
 
