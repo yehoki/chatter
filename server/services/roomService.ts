@@ -24,7 +24,7 @@ class roomService {
     if (room.error) {
       return room.error;
     }
-    this.rooms = this.rooms.filter((room) => room.name === name);
+    this.rooms = this.rooms.filter((room) => room.name !== name);
   }
 
   addUserToRoom(roomName: string, userId: string, userPassword?: string) {

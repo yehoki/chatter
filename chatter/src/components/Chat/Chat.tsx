@@ -3,11 +3,9 @@ import React, {
   KeyboardEvent,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
-import { debounce } from 'lodash';
 import './Chat.css';
 import { Socket } from 'socket.io-client';
 import SingleMessage from './SingleMessage';
@@ -111,7 +109,7 @@ function Chat({
         return () => clearTimeout(typingTimer);
       }
     },
-    [isTyping, socket, message]
+    [isTyping, socket, message, room, username]
   );
 
   useEffect(() => {
